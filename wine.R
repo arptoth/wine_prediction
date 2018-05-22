@@ -20,7 +20,8 @@ n_seed = 12345
 
 
 # Create target and feature list
-target = "points" # Result
+#target = "points" # Result
+target = "price" # Result
 features = setdiff(colnames(data), target)
 print(features)
 
@@ -55,11 +56,11 @@ h2o.performance(model_glm, newdata = h_test)
 
 ### Test other algos with AutoML
 
-model_automl = h2o.automl(x = features,
+model_automl <- h2o.automl(x = features,
                           y = target,
                           training_frame = h_train,
                           nfolds = 5,               # Cross-Validation
-                          max_runtime_secs = 1200,   # Max time
+                          max_runtime_secs = 30,   # Max time
                           max_models = 100,         # Max no. of models
                           stopping_metric = "RMSE", # Metric to optimize
                           project_name = "my_automl",
@@ -78,7 +79,7 @@ h2o.performance(model_automl@leader, newdata = h_test)
 explainer = lime(x = as.data.frame(h_train[, features]),model = model_automl@leader)
 
 # Extract one sample (change `1` to any row you want)
-d_samp = as.data.frame(h_test[5, features])
+d_samp = as.data.frame(h_test[1, features])
 # Assign a specifc row name (for better visualization)
 row.names(d_samp) = "Sample 1" 
 # Create explanations
@@ -89,6 +90,9 @@ explanations = lime::explain(x = d_samp,
                              n_features = 13) # Look top x features
 
 lime::plot_features(explanations, ncol = 1)
+
+
+
 
 
 
